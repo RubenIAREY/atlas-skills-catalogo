@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Catálogo interactivo de las 59 skills operativas de ATLAS, agrupadas en 12 temáticas con búsqueda y filtros.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#004A98">
+  <title>Catálogo de skills ATLAS · Reynasa</title>
+  <style>
+    :root { --blue:#004A98; --red:#CE0E2D; --orange:#FFA400; --ink:#111820; --muted:#536273; --line:#d8e0e8; --wash:#f3f6f9; --white:#fff; --shadow:0 14px 38px rgba(8,37,66,.10); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:linear-gradient(180deg,#eef4fa 0,#fff 420px); font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; line-height:1.55; }
+    button,input,select { font:inherit; }
+    button:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid var(--orange); outline-offset:3px; }
+    .skip { position:absolute; left:-9999px; top:8px; z-index:99; background:#fff; color:var(--blue); padding:.65rem 1rem; border-radius:.5rem; font-weight:800; }
+    .skip:focus { left:8px; }
+    .masthead { background:linear-gradient(120deg,#00376f 0,var(--blue) 62%,#0064ba 100%); color:#fff; overflow:hidden; position:relative; }
+    .masthead::after { content:""; position:absolute; width:360px; height:360px; border:70px solid rgba(255,255,255,.07); border-radius:50%; right:-110px; top:-165px; }
+    .wrap { width:min(1180px,calc(100% - 40px)); margin:0 auto; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:24px 0 12px; position:relative; z-index:1; }
+    .brand { display:flex; align-items:center; gap:14px; }
+    .brand img { width:156px; height:58px; object-fit:contain; background:#fff; border-radius:8px; padding:6px 10px; }
+    .brand span { font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; font-weight:800; opacity:.86; }
+    .hero { padding:42px 0 54px; position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:36px; }
+    .eyebrow { margin:0 0 12px; color:#ffd27a; font-weight:850; letter-spacing:.12em; text-transform:uppercase; font-size:.78rem; }
+    h1 { margin:0; max-width:800px; font-size:clamp(2.25rem,5vw,4.75rem); line-height:1.02; letter-spacing:-.045em; }
+    .hero-copy { margin:20px 0 0; max-width:720px; color:#eaf4ff; font-size:clamp(1rem,2vw,1.18rem); }
+    .hero-stat { min-width:178px; padding:22px; border:1px solid rgba(255,255,255,.28); background:rgba(0,27,54,.24); border-radius:18px; backdrop-filter:blur(4px); }
+    .hero-stat strong { display:block; font-size:2.6rem; line-height:1; }
+    .hero-stat span { display:block; margin-top:8px; color:#dceeff; }
+    main { padding:38px 0 70px; }
+    .controls { display:grid; grid-template-columns:minmax(240px,1.5fr) minmax(240px,1fr) auto; gap:14px; align-items:end; padding:22px; border:1px solid var(--line); background:rgba(255,255,255,.96); border-radius:18px; box-shadow:var(--shadow); }
+    .field label { display:block; margin:0 0 7px; font-size:.83rem; font-weight:800; color:#31475d; }
+    .field input,.field select { width:100%; min-height:48px; border:1px solid #9eacba; border-radius:10px; padding:10px 13px; background:#fff; color:var(--ink); }
+    .reset { min-height:48px; border:0; border-radius:10px; padding:10px 18px; background:var(--ink); color:#fff; font-weight:800; cursor:pointer; }
+    .reset:hover { background:var(--red); }
+    .statusline { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:28px 0 14px; }
+    .statusline h2 { margin:0; font-size:1.32rem; }
+    .statusline p { margin:0; color:var(--muted); }
+    .topic-summary { margin:0 0 34px; padding:0; list-style:none; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+    .summary-card { width:100%; min-height:82px; text-align:left; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:11px; background:#fff; color:var(--ink); padding:13px; cursor:pointer; }
+    .summary-card:hover { border-color:var(--blue); transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,74,152,.10); }
+    .summary-card span { font-size:.82rem; font-weight:750; line-height:1.25; }
+    .summary-card strong { color:var(--blue); font-size:1.35rem; }
+    .catalog { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .skill-card { min-width:0; border:1px solid var(--line); border-top:4px solid var(--blue); border-radius:14px; background:#fff; padding:20px; box-shadow:0 6px 20px rgba(15,45,74,.06); }
+    .skill-card:hover { border-top-color:var(--red); box-shadow:var(--shadow); }
+    .skill-card[hidden] { display:none; }
+    .skill-theme { margin:0 0 11px; color:var(--blue); font-size:.72rem; font-weight:850; letter-spacing:.06em; text-transform:uppercase; }
+    .skill-card h2 { margin:0 0 12px; overflow-wrap:anywhere; font-size:1.08rem; line-height:1.25; letter-spacing:-.015em; }
+    .skill-card > p:last-child { margin:0; color:#394959; font-size:.94rem; }
+    .empty { display:none; margin:38px 0; padding:28px; text-align:center; border:1px dashed #8797a8; border-radius:14px; background:var(--wash); }
+    .empty.visible { display:block; }
+    footer { border-top:1px solid var(--line); background:#f7f9fb; padding:28px 0; color:#526271; font-size:.9rem; }
+    footer strong { color:var(--blue); }
+    @media (max-width:900px) { .hero { grid-template-columns:1fr; } .hero-stat { width:180px; } .catalog { grid-template-columns:repeat(2,minmax(0,1fr)); } .topic-summary { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media (max-width:680px) { .wrap { width:min(100% - 24px,1180px); } .topbar { align-items:flex-start; } .brand { align-items:flex-start; flex-direction:column; } .brand img { width:132px; height:50px; } .hero { padding:28px 0 40px; } .controls { grid-template-columns:1fr; padding:16px; } .statusline { align-items:flex-start; flex-direction:column; } .topic-summary { grid-template-columns:repeat(2,minmax(0,1fr)); } .catalog { grid-template-columns:1fr; } }
+    @media (prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#catalogo">Saltar al catálogo</a>
+  <header class="masthead">
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand"><img src="data:image/jpeg;base64,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" alt="Reynasa Recambios"><span>Atlas · Biblioteca operativa</span></div>
+      </div>
+      <div class="hero">
+        <div>
+          <p class="eyebrow">Capacidades disponibles</p>
+          <h1>Catálogo de skills ATLAS</h1>
+          <p class="hero-copy">Una vista clara de las herramientas y procedimientos que ATLAS puede aplicar, organizados por ámbito de trabajo.</p>
+        </div>
+        <div class="hero-stat" aria-label="59 skills en 12 temáticas"><strong>59</strong><span>skills · 12 temáticas</span></div>
+      </div>
+    </div>
+  </header>
+  <main id="contenido" class="wrap">
+    <section class="controls" aria-label="Buscar y filtrar skills">
+      <div class="field"><label for="buscar">Buscar por nombre o descripción</label><input id="buscar" type="search" autocomplete="off" placeholder="Ej.: Excel, vídeo, GitHub…"></div>
+      <div class="field"><label for="tema">Temática</label><select id="tema"><option value="">Todas las temáticas · 59</option><option value="Correo, seguridad y atención interna">Correo, seguridad y atención interna · 3</option>
+<option value="Documentos, Excel y traducción">Documentos, Excel y traducción · 3</option>
+<option value="Comercial, comisiones y ventas">Comercial, comisiones y ventas · 2</option>
+<option value="Compras, facturación y recepciones">Compras, facturación y recepciones · 2</option>
+<option value="E-commerce, catálogo y producto">E-commerce, catálogo y producto · 3</option>
+<option value="SEO, investigación y contenidos">SEO, investigación y contenidos · 4</option>
+<option value="Creatividad y diseño visual">Creatividad y diseño visual · 4</option>
+<option value="Vídeo, audio y presentaciones">Vídeo, audio y presentaciones · 14</option>
+<option value="Desarrollo, GitHub y agentes IA">Desarrollo, GitHub y agentes IA · 14</option>
+<option value="Automatización, productividad e integraciones">Automatización, productividad e integraciones · 3</option>
+<option value="Datos, ML y conocimiento">Datos, ML y conocimiento · 5</option>
+<option value="Utilidades, hogar y gaming">Utilidades, hogar y gaming · 2</option></select></div>
+      <button id="restablecer" class="reset" type="button">Restablecer</button>
+    </section>
+    <div class="statusline">
+      <h2 id="catalogo">Skills disponibles</h2>
+      <p id="resultado" aria-live="polite" aria-atomic="true">59 resultados</p>
+    </div>
+    <ul class="topic-summary" aria-label="Resumen por temática"><li><button type="button" class="summary-card" data-theme-button="Correo, seguridad y atención interna" aria-label="Filtrar por Correo, seguridad y atención interna: 3 skills"><span>Correo, seguridad y atención interna</span><strong>3</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Documentos, Excel y traducción" aria-label="Filtrar por Documentos, Excel y traducción: 3 skills"><span>Documentos, Excel y traducción</span><strong>3</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Comercial, comisiones y ventas" aria-label="Filtrar por Comercial, comisiones y ventas: 2 skills"><span>Comercial, comisiones y ventas</span><strong>2</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Compras, facturación y recepciones" aria-label="Filtrar por Compras, facturación y recepciones: 2 skills"><span>Compras, facturación y recepciones</span><strong>2</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="E-commerce, catálogo y producto" aria-label="Filtrar por E-commerce, catálogo y producto: 3 skills"><span>E-commerce, catálogo y producto</span><strong>3</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="SEO, investigación y contenidos" aria-label="Filtrar por SEO, investigación y contenidos: 4 skills"><span>SEO, investigación y contenidos</span><strong>4</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Creatividad y diseño visual" aria-label="Filtrar por Creatividad y diseño visual: 4 skills"><span>Creatividad y diseño visual</span><strong>4</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Vídeo, audio y presentaciones" aria-label="Filtrar por Vídeo, audio y presentaciones: 14 skills"><span>Vídeo, audio y presentaciones</span><strong>14</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Desarrollo, GitHub y agentes IA" aria-label="Filtrar por Desarrollo, GitHub y agentes IA: 14 skills"><span>Desarrollo, GitHub y agentes IA</span><strong>14</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Automatización, productividad e integraciones" aria-label="Filtrar por Automatización, productividad e integraciones: 3 skills"><span>Automatización, productividad e integraciones</span><strong>3</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Datos, ML y conocimiento" aria-label="Filtrar por Datos, ML y conocimiento: 5 skills"><span>Datos, ML y conocimiento</span><strong>5</strong></button></li>
+<li><button type="button" class="summary-card" data-theme-button="Utilidades, hogar y gaming" aria-label="Filtrar por Utilidades, hogar y gaming: 2 skills"><span>Utilidades, hogar y gaming</span><strong>2</strong></button></li></ul>
+    <section class="catalog" aria-label="Catálogo de 59 skills"><article class="skill-card" data-skill-card data-theme="Correo, seguridad y atención interna" data-search="deteccion_correos_fraudulentos correo, seguridad y atención interna analiza correos sospechosos proporcionados por rubén para detectar fraude o phishing. revisa remitente, enlaces, dominio, urgencia, adjuntos y señales técnicas disponibles; entrega por telegram un informe markdown con riesgo, evidencias y recomendaciones.">
+  <p class="skill-theme">Correo, seguridad y atención interna</p>
+  <h2><strong>deteccion_correos_fraudulentos</strong></h2>
+  <p>Analiza correos sospechosos proporcionados por Rubén para detectar fraude o phishing. Revisa remitente, enlaces, dominio, urgencia, adjuntos y señales técnicas disponibles; entrega por Telegram un informe Markdown con riesgo, evidencias y recomendaciones.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Correo, seguridad y atención interna" data-search="email-operations-and-onboarding correo, seguridad y atención interna opera buzones de agentes mediante imap/smtp y gmail/workspace: configura cuentas, busca mensajes, conserva hilos, prepara o envía respuestas autorizadas y diagnostica incidencias. trabaja con metadatos y contenido permitido; entrega correo verificado y trazabilidad.">
+  <p class="skill-theme">Correo, seguridad y atención interna</p>
+  <h2><strong>email-operations-and-onboarding</strong></h2>
+  <p>Opera buzones de agentes mediante IMAP/SMTP y Gmail/Workspace: configura cuentas, busca mensajes, conserva hilos, prepara o envía respuestas autorizadas y diagnostica incidencias. Trabaja con metadatos y contenido permitido; entrega correo verificado y trazabilidad.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Correo, seguridad y atención interna" data-search="english-audio-coach-reynasa correo, seguridad y atención interna apoya la práctica de inglés del personal de reynasa a partir de texto o audio: comprende, corrige y traduce expresiones, explica mejoras y entrega respuestas breves y notas de voz claras para escuchar y repetir.">
+  <p class="skill-theme">Correo, seguridad y atención interna</p>
+  <h2><strong>english-audio-coach-reynasa</strong></h2>
+  <p>Apoya la práctica de inglés del personal de Reynasa a partir de texto o audio: comprende, corrige y traduce expresiones, explica mejoras y entrega respuestas breves y notas de voz claras para escuchar y repetir.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Documentos, Excel y traducción" data-search="atlas-email-excel-technical-translation documentos, excel y traducción traduce al español grandes columnas de etiquetas técnicas de automoción en portugués dentro de excel. conserva estructura, referencias y celdas originales, valida el libro y entrega un xlsx traducido respetando límites del correo interno.">
+  <p class="skill-theme">Documentos, Excel y traducción</p>
+  <h2><strong>atlas-email-excel-technical-translation</strong></h2>
+  <p>Traduce al español grandes columnas de etiquetas técnicas de automoción en portugués dentro de Excel. Conserva estructura, referencias y celdas originales, valida el libro y entrega un XLSX traducido respetando límites del correo interno.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Documentos, Excel y traducción" data-search="document-deliverable-workflows documentos, excel y traducción orquesta entregables documentales a partir de pdf, excel, texto, imágenes o fuentes autorizadas: extrae, transforma, maqueta y verifica contenido. entrega informes pdf/html, presentaciones, hojas de cálculo o paquetes documentales listos para usar.">
+  <p class="skill-theme">Documentos, Excel y traducción</p>
+  <h2><strong>document-deliverable-workflows</strong></h2>
+  <p>Orquesta entregables documentales a partir de PDF, Excel, texto, imágenes o fuentes autorizadas: extrae, transforma, maqueta y verifica contenido. Entrega informes PDF/HTML, presentaciones, hojas de cálculo o paquetes documentales listos para usar.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Documentos, Excel y traducción" data-search="pdf-to-html-training-deck documentos, excel y traducción convierte un pdf fuente en una presentación html formativa, corporativa y navegable. selecciona texto e imágenes del documento, organiza diapositivas, integra recursos sin conexión y entrega un paquete autocontenido revisado y verificado.">
+  <p class="skill-theme">Documentos, Excel y traducción</p>
+  <h2><strong>pdf-to-html-training-deck</strong></h2>
+  <p>Convierte un PDF fuente en una presentación HTML formativa, corporativa y navegable. Selecciona texto e imágenes del documento, organiza diapositivas, integra recursos sin conexión y entrega un paquete autocontenido revisado y verificado.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Comercial, comisiones y ventas" data-search="comisiones-moto comercial, comisiones y ventas calcula comisiones de comerciales de moto desde informes sage x3/zlm19 en excel o csv. usa comercial, marca, familia, cantidades, ventas y márgenes; entrega un xlsx con resumen, detalle, comisión individual y total.">
+  <p class="skill-theme">Comercial, comisiones y ventas</p>
+  <h2><strong>comisiones-moto</strong></h2>
+  <p>Calcula comisiones de comerciales de MOTO desde informes Sage X3/ZLM19 en Excel o CSV. Usa comercial, marca, familia, cantidades, ventas y márgenes; entrega un XLSX con resumen, detalle, comisión individual y total.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Comercial, comisiones y ventas" data-search="visitas-vs-cifras-reynasa comercial, comisiones y ventas cruza excel de visitas comerciales con cifras o ventas de clientes de reynasa. normaliza identificadores, relaciona actividad y resultados, calcula indicadores bajo el criterio validado y entrega un excel analítico y un dashboard coherente.">
+  <p class="skill-theme">Comercial, comisiones y ventas</p>
+  <h2><strong>visitas-vs-cifras-reynasa</strong></h2>
+  <p>Cruza Excel de visitas comerciales con cifras o ventas de clientes de Reynasa. Normaliza identificadores, relaciona actividad y resultados, calcula indicadores bajo el criterio validado y entrega un Excel analítico y un dashboard coherente.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Compras, facturación y recepciones" data-search="calculo-sigaus-facturas compras, facturación y recepciones calcula cargos sigaus desde una o varias facturas de cualquier proveedor. identifica líneas, evita omisiones y duplicados, suma por factura y proveedor, y entrega total general, detalle trazable y desglose csv verificable.">
+  <p class="skill-theme">Compras, facturación y recepciones</p>
+  <h2><strong>calculo-sigaus-facturas</strong></h2>
+  <p>Calcula cargos SIGAUS desde una o varias facturas de cualquier proveedor. Identifica líneas, evita omisiones y duplicados, suma por factura y proveedor, y entrega total general, detalle trazable y desglose CSV verificable.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Compras, facturación y recepciones" data-search="contraste-albaranes-recepciones compras, facturación y recepciones cruza albaranes de proveedor pdf edi o dispatchadvice xlsx con recepciones erp/x3 o libros sage. detecta diferencias por pedido, referencia, ítem y unidades, elimina duplicidades de representación y entrega un excel de contraste.">
+  <p class="skill-theme">Compras, facturación y recepciones</p>
+  <h2><strong>contraste-albaranes-recepciones</strong></h2>
+  <p>Cruza albaranes de proveedor PDF EDI o DispatchAdvice XLSX con recepciones ERP/X3 o libros Sage. Detecta diferencias por pedido, referencia, ítem y unidades, elimina duplicidades de representación y entrega un Excel de contraste.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="E-commerce, catálogo y producto" data-search="higgsfield-marketplace-cards e-commerce, catálogo y producto produce conjuntos visuales para fichas de marketplace a partir de descripciones, contexto de producto y marca, categoría e imágenes de referencia. entrega urls de imagen principal, secundarias, infografías, escenas lifestyle y módulos a+ según el alcance solicitado.">
+  <p class="skill-theme">E-commerce, catálogo y producto</p>
+  <h2><strong>higgsfield-marketplace-cards</strong></h2>
+  <p>Produce conjuntos visuales para fichas de marketplace a partir de descripciones, contexto de producto y marca, categoría e imágenes de referencia. Entrega URLs de imagen principal, secundarias, infografías, escenas lifestyle y módulos A+ según el alcance solicitado.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="E-commerce, catálogo y producto" data-search="higgsfield-product-photoshoot e-commerce, catálogo y producto genera fotografía comercial de producto con higgsfield a partir de una descripción, imágenes de referencia, marca, estilo y destino. entrega urls de tomas de estudio, lifestyle, banners, carruseles, anuncios, pruebas virtuales o variantes estilizadas.">
+  <p class="skill-theme">E-commerce, catálogo y producto</p>
+  <h2><strong>higgsfield-product-photoshoot</strong></h2>
+  <p>Genera fotografía comercial de producto con Higgsfield a partir de una descripción, imágenes de referencia, marca, estilo y destino. Entrega URLs de tomas de estudio, lifestyle, banners, carruseles, anuncios, pruebas virtuales o variantes estilizadas.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="E-commerce, catálogo y producto" data-search="reynasa-operations-and-assets e-commerce, catálogo y producto centraliza operaciones y activos autorizados de reynasa y atlas: identidad de marca, informes, creatividades tdr, localización de proyectos y traspasos seguros. trabaja con archivos verificados y entrega piezas corporativas o rutas operativas comprobadas.">
+  <p class="skill-theme">E-commerce, catálogo y producto</p>
+  <h2><strong>reynasa-operations-and-assets</strong></h2>
+  <p>Centraliza operaciones y activos autorizados de Reynasa y ATLAS: identidad de marca, informes, creatividades TDR, localización de proyectos y traspasos seguros. Trabaja con archivos verificados y entrega piezas corporativas o rutas operativas comprobadas.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="SEO, investigación y contenidos" data-search="creative-writing-and-ideation seo, investigación y contenidos desarrolla y mejora ideas y prosa según audiencia, medio, restricciones, objetivos y muestras de voz. genera opciones diferenciadas, selecciona conceptos, humaniza o edita borradores y entrega texto pulido, fiel al significado y listo para publicar.">
+  <p class="skill-theme">SEO, investigación y contenidos</p>
+  <h2><strong>creative-writing-and-ideation</strong></h2>
+  <p>Desarrolla y mejora ideas y prosa según audiencia, medio, restricciones, objetivos y muestras de voz. Genera opciones diferenciadas, selecciona conceptos, humaniza o edita borradores y entrega texto pulido, fiel al significado y listo para publicar.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="SEO, investigación y contenidos" data-search="research-source-workflows seo, investigación y contenidos investiga fuentes externas como arxiv, blogs, rss, polymarket y wikis de conocimiento llm. trabaja con consultas, feeds y documentos públicos; contrasta procedencia y entrega resúmenes fundamentados, monitorizaciones o informes de hallazgos.">
+  <p class="skill-theme">SEO, investigación y contenidos</p>
+  <h2><strong>research-source-workflows</strong></h2>
+  <p>Investiga fuentes externas como arXiv, blogs, RSS, Polymarket y wikis de conocimiento LLM. Trabaja con consultas, feeds y documentos públicos; contrasta procedencia y entrega resúmenes fundamentados, monitorizaciones o informes de hallazgos.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="SEO, investigación y contenidos" data-search="seo-content-research seo, investigación y contenidos investiga palabras clave y contenidos seo usando intención comercial, serp, competencia, volúmenes disponibles y categorías del negocio. agrupa y prioriza oportunidades, y entrega clusters, calendarios o planes accionables para tdr y reynasa.">
+  <p class="skill-theme">SEO, investigación y contenidos</p>
+  <h2><strong>seo-content-research</strong></h2>
+  <p>Investiga palabras clave y contenidos SEO usando intención comercial, SERP, competencia, volúmenes disponibles y categorías del negocio. Agrupa y prioriza oportunidades, y entrega clusters, calendarios o planes accionables para TDR y Reynasa.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="SEO, investigación y contenidos" data-search="social-and-content-ingestion seo, investigación y contenidos obtiene y transforma contenido ligero de youtube, gif y x/twitter usando urls, consultas, cuentas, subtítulos y archivos multimedia. entrega transcripciones, resúmenes, informes, gif descargados o publicaciones, respuestas y mensajes directos mediante integraciones configuradas.">
+  <p class="skill-theme">SEO, investigación y contenidos</p>
+  <h2><strong>social-and-content-ingestion</strong></h2>
+  <p>Obtiene y transforma contenido ligero de YouTube, GIF y X/Twitter usando URLs, consultas, cuentas, subtítulos y archivos multimedia. Entrega transcripciones, resúmenes, informes, GIF descargados o publicaciones, respuestas y mensajes directos mediante integraciones configuradas.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Creatividad y diseño visual" data-search="ascii-media creatividad y diseño visual genera piezas creativas ascii o ansi a partir de texto, imágenes y vídeos: banners, mensajes decorativos, arte textual y animaciones. ajusta estilo, anchura y color, y entrega texto monoespaciado o archivos multimedia verificados.">
+  <p class="skill-theme">Creatividad y diseño visual</p>
+  <h2><strong>ascii-media</strong></h2>
+  <p>Genera piezas creativas ASCII o ANSI a partir de texto, imágenes y vídeos: banners, mensajes decorativos, arte textual y animaciones. Ajusta estilo, anchura y color, y entrega texto monoespaciado o archivos multimedia verificados.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Creatividad y diseño visual" data-search="baoyu-visual-content creatividad y diseño visual transforma ideas y contenidos fuente en ilustraciones editoriales, cómics educativos o infografías coherentes. trabaja con tesis, entidades, relaciones, procesos, audiencia y restricciones visuales, y entrega prompts estructurados o artefactos explicativos legibles y consistentes.">
+  <p class="skill-theme">Creatividad y diseño visual</p>
+  <h2><strong>baoyu-visual-content</strong></h2>
+  <p>Transforma ideas y contenidos fuente en ilustraciones editoriales, cómics educativos o infografías coherentes. Trabaja con tesis, entidades, relaciones, procesos, audiencia y restricciones visuales, y entrega prompts estructurados o artefactos explicativos legibles y consistentes.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Creatividad y diseño visual" data-search="creative-visual-artifacts creatividad y diseño visual crea artefactos visuales editables o ejecutables a partir de requisitos, contenido real y referencias de diseño. puede producir html/svg, json de excalidraw, bocetos p5.js, pixel art, diagramas o especificaciones design.md, validados en su formato.">
+  <p class="skill-theme">Creatividad y diseño visual</p>
+  <h2><strong>creative-visual-artifacts</strong></h2>
+  <p>Crea artefactos visuales editables o ejecutables a partir de requisitos, contenido real y referencias de diseño. Puede producir HTML/SVG, JSON de Excalidraw, bocetos p5.js, pixel art, diagramas o especificaciones DESIGN.md, validados en su formato.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Creatividad y diseño visual" data-search="hyperframes-creative creatividad y diseño visual dirige la identidad visual no animada de vídeos hyperframes. trabaja con especificaciones de diseño, paletas, tipografía, marca, narración, ritmo y datos de audio; entrega decisiones creativas coherentes, planes de composición y comprobaciones de contraste o adherencia.">
+  <p class="skill-theme">Creatividad y diseño visual</p>
+  <h2><strong>hyperframes-creative</strong></h2>
+  <p>Dirige la identidad visual no animada de vídeos HyperFrames. Trabaja con especificaciones de diseño, paletas, tipografía, marca, narración, ritmo y datos de audio; entrega decisiones creativas coherentes, planes de composición y comprobaciones de contraste o adherencia.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="audio-music-voice-workflows vídeo, audio y presentaciones gestiona creación musical, análisis de audio y respuestas habladas a partir de letras, prompts, pistas, transcripciones o texto. entrega canciones o sonidos generados, espectrogramas y características, listas de reproducción, archivos tts o notas de voz verificadas.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>audio-music-voice-workflows</strong></h2>
+  <p>Gestiona creación musical, análisis de audio y respuestas habladas a partir de letras, prompts, pistas, transcripciones o texto. Entrega canciones o sonidos generados, espectrogramas y características, listas de reproducción, archivos TTS o notas de voz verificadas.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="embedded-captions vídeo, audio y presentaciones añade subtítulos diseñados a vídeos de una sola persona hablando. trabaja con el clip, audio, transcripción, fotogramas, mate del sujeto y zonas seguras; entrega un mp4 final con rótulos legibles y, según la identidad, picos tipográficos ocluidos.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>embedded-captions</strong></h2>
+  <p>Añade subtítulos diseñados a vídeos de una sola persona hablando. Trabaja con el clip, audio, transcripción, fotogramas, mate del sujeto y zonas seguras; entrega un MP4 final con rótulos legibles y, según la identidad, picos tipográficos ocluidos.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="faceless-explainer vídeo, audio y presentaciones convierte artículos, notas, temas o briefings en vídeos explicativos sin presentador. trabaja con texto, guion narrado, tts, música, tiempos y planes visuales; entrega un mp4 con tipografía, gráficos abstractos, diagramas, datos y subtítulos.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>faceless-explainer</strong></h2>
+  <p>Convierte artículos, notas, temas o briefings en vídeos explicativos sin presentador. Trabaja con texto, guion narrado, TTS, música, tiempos y planes visuales; entrega un MP4 con tipografía, gráficos abstractos, diagramas, datos y subtítulos.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="general-video vídeo, audio y presentaciones orquesta composiciones de vídeo hyperframes cuando ningún flujo especializado encaja. trabaja con briefings, especificaciones de diseño, html, css, medios, pistas y cronologías; entrega una previsualización validada y, si se solicita, un mp4 renderizado.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>general-video</strong></h2>
+  <p>Orquesta composiciones de vídeo HyperFrames cuando ningún flujo especializado encaja. Trabaja con briefings, especificaciones de diseño, HTML, CSS, medios, pistas y cronologías; entrega una previsualización validada y, si se solicita, un MP4 renderizado.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="graphic-overlays vídeo, audio y presentaciones viste un vídeo existente de entrevista, pódcast o presentador con tarjetas gráficas sincronizadas. trabaja con metadatos, audio, transcripción y html por tarjeta; entrega guion gráfico, composición ensamblada y mp4 con títulos, citas, datos o pip.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>graphic-overlays</strong></h2>
+  <p>Viste un vídeo existente de entrevista, pódcast o presentador con tarjetas gráficas sincronizadas. Trabaja con metadatos, audio, transcripción y HTML por tarjeta; entrega guion gráfico, composición ensamblada y MP4 con títulos, citas, datos o PiP.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="higgsfield-generate vídeo, audio y presentaciones genera y transforma imágenes o vídeos con modelos de higgsfield usando prompts, referencias visuales, archivos multimedia, productos, avatares o urls. también analiza vídeos terminados y entrega enlaces al contenido generado o informes de atención y viralidad.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>higgsfield-generate</strong></h2>
+  <p>Genera y transforma imágenes o vídeos con modelos de Higgsfield usando prompts, referencias visuales, archivos multimedia, productos, avatares o URLs. También analiza vídeos terminados y entrega enlaces al contenido generado o informes de atención y viralidad.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="hyperframes vídeo, audio y presentaciones guía la creación integral de vídeo basado en html con hyperframes. trabaja con atributos temporales, css, cronologías gsap, medios, variables, audio y diseño; entrega composiciones sincronizadas y validadas, previsualizables o renderizables como vídeo.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>hyperframes</strong></h2>
+  <p>Guía la creación integral de vídeo basado en HTML con HyperFrames. Trabaja con atributos temporales, CSS, cronologías GSAP, medios, variables, audio y diseño; entrega composiciones sincronizadas y validadas, previsualizables o renderizables como vídeo.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="hyperframes-animation vídeo, audio y presentaciones proporciona reglas, plantillas, transiciones y adaptadores para animar composiciones hyperframes de forma determinista. trabaja con html, css, cronologías y runtimes como gsap, lottie o three.js; entrega movimiento reproducible y un mapa de animación auditable.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>hyperframes-animation</strong></h2>
+  <p>Proporciona reglas, plantillas, transiciones y adaptadores para animar composiciones HyperFrames de forma determinista. Trabaja con HTML, CSS, cronologías y runtimes como GSAP, Lottie o Three.js; entrega movimiento reproducible y un mapa de animación auditable.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="hyperframes-media vídeo, audio y presentaciones prepara recursos audiovisuales para composiciones hyperframes. trabaja con texto, voces, música, audio, transcripciones whisper, vídeo y fondos; entrega narración tts, bgm, palabras temporizadas, recortes transparentes y subtítulos listos para consumir o animar.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>hyperframes-media</strong></h2>
+  <p>Prepara recursos audiovisuales para composiciones HyperFrames. Trabaja con texto, voces, música, audio, transcripciones Whisper, vídeo y fondos; entrega narración TTS, BGM, palabras temporizadas, recortes transparentes y subtítulos listos para consumir o animar.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="motion-graphics vídeo, audio y presentaciones crea piezas breves donde el movimiento comunica: tipografía cinética, cifras, gráficos, logotipos o titulares. trabaja con texto, datos, marcas y recursos buscados cuando proceda; entrega html hyperframes verificado y vídeo mp4 o superposición transparente.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>motion-graphics</strong></h2>
+  <p>Crea piezas breves donde el movimiento comunica: tipografía cinética, cifras, gráficos, logotipos o titulares. Trabaja con texto, datos, marcas y recursos buscados cuando proceda; entrega HTML HyperFrames verificado y vídeo MP4 o superposición transparente.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="product-launch-video vídeo, audio y presentaciones produce vídeos de lanzamiento, promoción o revelación de funciones para productos. trabaja con url de marketing, captura de marca, recursos del sitio o un guion y briefing; entrega narración, audio, plan de escenas, composiciones y mp4 promocional validado.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>product-launch-video</strong></h2>
+  <p>Produce vídeos de lanzamiento, promoción o revelación de funciones para productos. Trabaja con URL de marketing, captura de marca, recursos del sitio o un guion y briefing; entrega narración, audio, plan de escenas, composiciones y MP4 promocional validado.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="slideshow vídeo, audio y presentaciones crea o edita presentaciones hyperframes navegables. trabaja con escenas, clips, cronologías y un manifiesto json de diapositivas, notas, fragmentos, zonas interactivas y ramas; entrega una composición de deck interactivo con navegación, modo presentador y validación.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>slideshow</strong></h2>
+  <p>Crea o edita presentaciones HyperFrames navegables. Trabaja con escenas, clips, cronologías y un manifiesto JSON de diapositivas, notas, fragmentos, zonas interactivas y ramas; entrega una composición de deck interactivo con navegación, modo presentador y validación.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="social-video-download-and-delivery vídeo, audio y presentaciones descarga vídeos públicos desde la url social indicada, sin eludir controles de acceso, y verifica metadatos, formatos, duración, resolución, códecs y audio. entrega un archivo local normalizado para mensajería, con h.264 cuando sea necesario y sha-256 comprobado.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>social-video-download-and-delivery</strong></h2>
+  <p>Descarga vídeos públicos desde la URL social indicada, sin eludir controles de acceso, y verifica metadatos, formatos, duración, resolución, códecs y audio. Entrega un archivo local normalizado para mensajería, con H.264 cuando sea necesario y SHA-256 comprobado.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Vídeo, audio y presentaciones" data-search="website-to-video vídeo, audio y presentaciones convierte un sitio web general en un vídeo de visita o escaparate. trabaja con url, capturas de chrome, activos de marca, estilos, mensaje, guion y audio; entrega storyboard, composiciones hyperframes validadas y previsualización final, con mp4 bajo petición.">
+  <p class="skill-theme">Vídeo, audio y presentaciones</p>
+  <h2><strong>website-to-video</strong></h2>
+  <p>Convierte un sitio web general en un vídeo de visita o escaparate. Trabaja con URL, capturas de Chrome, activos de marca, estilos, mensaje, guion y audio; entrega storyboard, composiciones HyperFrames validadas y previsualización final, con MP4 bajo petición.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="ai-coding-agents desarrollo, github y agentes ia coordina y delega trabajo de programación a claude code, codex, opencode o carriles kanban, usando contexto del repositorio, restricciones y criterios de aceptación; entrega cambios aislados, registros, pruebas y artefactos verificables.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>ai-coding-agents</strong></h2>
+  <p>Coordina y delega trabajo de programación a Claude Code, Codex, OpenCode o carriles Kanban, usando contexto del repositorio, restricciones y criterios de aceptación; entrega cambios aislados, registros, pruebas y artefactos verificables.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="atlas-github-pages-publisher desarrollo, github y agentes ia publica html o sitios estáticos aprobados en repositorios públicos independientes de github pages; trabaja con archivos, activos, visibilidad, ramas, hashes y pruebas, y entrega repositorio, url pública y manifiesto de verificación.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>atlas-github-pages-publisher</strong></h2>
+  <p>Publica HTML o sitios estáticos aprobados en repositorios públicos independientes de GitHub Pages; trabaja con archivos, activos, visibilidad, ramas, hashes y pruebas, y entrega repositorio, URL pública y manifiesto de verificación.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="dogfood desarrollo, github y agentes ia realiza pruebas exploratorias sistemáticas de aplicaciones web usando url, alcance, dom, interacciones, consola y capturas; identifica, deduplica y clasifica fallos, y entrega evidencias y un informe estructurado por severidad y categoría.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>dogfood</strong></h2>
+  <p>Realiza pruebas exploratorias sistemáticas de aplicaciones web usando URL, alcance, DOM, interacciones, consola y capturas; identifica, deduplica y clasifica fallos, y entrega evidencias y un informe estructurado por severidad y categoría.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="github-workflows desarrollo, github y agentes ia gestiona repositorios github mediante git, gh y apis, utilizando ramas, remotos, issues, diferencias, pruebas, ci y etiquetas; entrega repositorios configurados, incidencias, revisiones, pull requests, lanzamientos y enlaces verificables.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>github-workflows</strong></h2>
+  <p>Gestiona repositorios GitHub mediante git, gh y APIs, utilizando ramas, remotos, issues, diferencias, pruebas, CI y etiquetas; entrega repositorios configurados, incidencias, revisiones, pull requests, lanzamientos y enlaces verificables.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="hermes-agent desarrollo, github y agentes ia orienta la instalación, configuración, operación, diagnóstico y extensión de hermes agent con datos de perfiles, proveedores, herramientas, sesiones, gateways y ajustes; entrega comandos aplicables, configuración verificada y procedimientos de resolución.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>hermes-agent</strong></h2>
+  <p>Orienta la instalación, configuración, operación, diagnóstico y extensión de Hermes Agent con datos de perfiles, proveedores, herramientas, sesiones, gateways y ajustes; entrega comandos aplicables, configuración verificada y procedimientos de resolución.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="hermes-operations-and-extensions desarrollo, github y agentes ia opera y amplía hermes sobre skills, mcp, webhooks, comandos, perfiles, gateways, cron, contenedores y estado de ejecución; trabaja con configuración y registros autorizados, y entrega cambios comprobados, diagnósticos y verificaciones.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>hermes-operations-and-extensions</strong></h2>
+  <p>Opera y amplía Hermes sobre skills, MCP, webhooks, comandos, perfiles, gateways, cron, contenedores y estado de ejecución; trabaja con configuración y registros autorizados, y entrega cambios comprobados, diagnósticos y verificaciones.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="hyperframes-cli desarrollo, github y agentes ia gestiona el ciclo de desarrollo de proyectos hyperframes mediante comandos. trabaja con composiciones html, medios y el entorno node, chrome y ffmpeg; entrega proyectos inicializados, informes de lint e inspección, previsualizaciones y renders mp4 o webm.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>hyperframes-cli</strong></h2>
+  <p>Gestiona el ciclo de desarrollo de proyectos HyperFrames mediante comandos. Trabaja con composiciones HTML, medios y el entorno Node, Chrome y FFmpeg; entrega proyectos inicializados, informes de lint e inspección, previsualizaciones y renders MP4 o WebM.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="hyperframes-core desarrollo, github y agentes ia define el contrato técnico para composiciones html de hyperframes. trabaja con atributos temporales, pistas, clips, subcomposiciones, variables, medios y cronologías seekables; entrega una estructura renderizable, determinista y verificable mediante lint, validación, inspección y snapshots.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>hyperframes-core</strong></h2>
+  <p>Define el contrato técnico para composiciones HTML de HyperFrames. Trabaja con atributos temporales, pistas, clips, subcomposiciones, variables, medios y cronologías seekables; entrega una estructura renderizable, determinista y verificable mediante lint, validación, inspección y snapshots.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="hyperframes-registry desarrollo, github y agentes ia instala y conecta bloques y componentes reutilizables en proyectos hyperframes. trabaja con el registro, hyperframes.json, archivos html, rutas y manifiestos; entrega archivos instalados, fragmentos de integración y, al contribuir, un elemento validado preparado para pr.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>hyperframes-registry</strong></h2>
+  <p>Instala y conecta bloques y componentes reutilizables en proyectos HyperFrames. Trabaja con el registro, hyperframes.json, archivos HTML, rutas y manifiestos; entrega archivos instalados, fragmentos de integración y, al contribuir, un elemento validado preparado para PR.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="kanban-workflows desarrollo, github y agentes ia organiza trabajo multiagente duradero en tableros kanban, usando tareas, dependencias, asignaciones, comentarios y evidencias de ejecución; entrega carriles coordinados, artefactos verificables, estados de avance y diagnósticos accionables ante bloqueos.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>kanban-workflows</strong></h2>
+  <p>Organiza trabajo multiagente duradero en tableros Kanban, usando tareas, dependencias, asignaciones, comentarios y evidencias de ejecución; entrega carriles coordinados, artefactos verificables, estados de avance y diagnósticos accionables ante bloqueos.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="pr-to-video desarrollo, github y agentes ia transforma una pull request de github en un explicador audiovisual del cambio. trabaja con título, descripción, diff, commits, archivos, estadísticas y colaboradores obtenidos por gh; entrega guion, voz, música, escenas de código, subtítulos y mp4 validado.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>pr-to-video</strong></h2>
+  <p>Transforma una pull request de GitHub en un explicador audiovisual del cambio. Trabaja con título, descripción, diff, commits, archivos, estadísticas y colaboradores obtenidos por gh; entrega guion, voz, música, escenas de código, subtítulos y MP4 validado.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="remotion-to-hyperframes desarrollo, github y agentes ia migra explícitamente composiciones de vídeo remotion basadas en react a hyperframes html. trabaja con componentes, secuencias, medios, temporización y código fuente; entrega index.html, notas de limitaciones y una traducción validada por comparación ssim, o recomienda interoperabilidad ante bloqueos.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>remotion-to-hyperframes</strong></h2>
+  <p>Migra explícitamente composiciones de vídeo Remotion basadas en React a HyperFrames HTML. Trabaja con componentes, secuencias, medios, temporización y código fuente; entrega index.html, notas de limitaciones y una traducción validada por comparación SSIM, o recomienda interoperabilidad ante bloqueos.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="software-debugging-toolkit desarrollo, github y agentes ia aplica depuración sistemática a software python, node.js y hermes, usando fallos reproducibles, trazas, estado de ejecución, breakpoints y pruebas; entrega causa raíz explicada, corrección mínima y verificación de regresiones.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>software-debugging-toolkit</strong></h2>
+  <p>Aplica depuración sistemática a software Python, Node.js y Hermes, usando fallos reproducibles, trazas, estado de ejecución, breakpoints y pruebas; entrega causa raíz explicada, corrección mínima y verificación de regresiones.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Desarrollo, GitHub y agentes IA" data-search="software-delivery-workflows desarrollo, github y agentes ia guía trabajo de software desde la intención hasta un cambio verificado, usando alcance, archivos, experimentos, pruebas, diffs y artefactos; entrega planes ejecutables, implementaciones, revisiones, traspasos y evidencia final de compilación o validación.">
+  <p class="skill-theme">Desarrollo, GitHub y agentes IA</p>
+  <h2><strong>software-delivery-workflows</strong></h2>
+  <p>Guía trabajo de software desde la intención hasta un cambio verificado, usando alcance, archivos, experimentos, pruebas, diffs y artefactos; entrega planes ejecutables, implementaciones, revisiones, traspasos y evidencia final de compilación o validación.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Automatización, productividad e integraciones" data-search="productivity-api-integrations automatización, productividad e integraciones opera servicios empresariales como google workspace, airtable, linear y notion mediante cli o api. trabaja con ids, esquemas y permisos reales; busca, crea o actualiza objetos y entrega enlaces e identificadores verificables.">
+  <p class="skill-theme">Automatización, productividad e integraciones</p>
+  <h2><strong>productivity-api-integrations</strong></h2>
+  <p>Opera servicios empresariales como Google Workspace, Airtable, Linear y Notion mediante CLI o API. Trabaja con IDs, esquemas y permisos reales; busca, crea o actualiza objetos y entrega enlaces e identificadores verificables.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Automatización, productividad e integraciones" data-search="travel-and-map-planning automatización, productividad e integraciones planifica viajes e itinerarios usando ubicaciones, fechas, preferencias, geocodificación, puntos de interés, rutas, husos horarios, transporte, alojamiento y seguridad. entrega un plan práctico con mapas, tiempos, logística y recomendaciones verificables.">
+  <p class="skill-theme">Automatización, productividad e integraciones</p>
+  <h2><strong>travel-and-map-planning</strong></h2>
+  <p>Planifica viajes e itinerarios usando ubicaciones, fechas, preferencias, geocodificación, puntos de interés, rutas, husos horarios, transporte, alojamiento y seguridad. Entrega un plan práctico con mapas, tiempos, logística y recomendaciones verificables.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Automatización, productividad e integraciones" data-search="yuanbao automatización, productividad e integraciones gestiona interacciones en grupos yuanbao consultando código de grupo, información, miembros y apodos exactos; genera menciones reales en respuestas y envía mensajes privados, incluso con archivos multimedia, informando el resultado.">
+  <p class="skill-theme">Automatización, productividad e integraciones</p>
+  <h2><strong>yuanbao</strong></h2>
+  <p>Gestiona interacciones en grupos Yuanbao consultando código de grupo, información, miembros y apodos exactos; genera menciones reales en respuestas y envía mensajes privados, incluso con archivos multimedia, informando el resultado.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Datos, ML y conocimiento" data-search="higgsfield-soul-id datos, ml y conocimiento entrena un modelo facial reutilizable de higgsfield con un nombre y entre cinco y veinte fotografías de distintos ángulos e iluminaciones. entrega una identidad soul preparada para mantener el rostro en posteriores generaciones de imagen o vídeo.">
+  <p class="skill-theme">Datos, ML y conocimiento</p>
+  <h2><strong>higgsfield-soul-id</strong></h2>
+  <p>Entrena un modelo facial reutilizable de Higgsfield con un nombre y entre cinco y veinte fotografías de distintos ángulos e iluminaciones. Entrega una identidad Soul preparada para mantener el rostro en posteriores generaciones de imagen o vídeo.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Datos, ML y conocimiento" data-search="jupyter-live-kernel datos, ml y conocimiento proporciona un entorno python iterativo mediante un kernel jupyter vivo, trabajando con notebooks, variables persistentes, dataframes y código exploratorio; entrega resultados json, estado inspeccionable, celdas editadas y ejecuciones verificadas.">
+  <p class="skill-theme">Datos, ML y conocimiento</p>
+  <h2><strong>jupyter-live-kernel</strong></h2>
+  <p>Proporciona un entorno Python iterativo mediante un kernel Jupyter vivo, trabajando con notebooks, variables persistentes, DataFrames y código exploratorio; entrega resultados JSON, estado inspeccionable, celdas editadas y ejecuciones verificadas.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Datos, ML y conocimiento" data-search="mlops-model-lifecycle datos, ml y conocimiento gestiona el ciclo de vida de modelos ml y llm con repositorios, revisiones, datasets, artefactos, hardware, métricas y configuraciones; entrega modelos versionados, inferencia local, evaluaciones reproducibles, seguimiento experimental y resultados verificables.">
+  <p class="skill-theme">Datos, ML y conocimiento</p>
+  <h2><strong>mlops-model-lifecycle</strong></h2>
+  <p>Gestiona el ciclo de vida de modelos ML y LLM con repositorios, revisiones, datasets, artefactos, hardware, métricas y configuraciones; entrega modelos versionados, inferencia local, evaluaciones reproducibles, seguimiento experimental y resultados verificables.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Datos, ML y conocimiento" data-search="obsidian datos, ml y conocimiento administra un almacén obsidian desde el sistema de archivos, trabajando con rutas resueltas y notas markdown; permite leer, listar, buscar, crear, enlazar y editar contenido, y entrega notas organizadas con wikilinks.">
+  <p class="skill-theme">Datos, ML y conocimiento</p>
+  <h2><strong>obsidian</strong></h2>
+  <p>Administra un almacén Obsidian desde el sistema de archivos, trabajando con rutas resueltas y notas Markdown; permite leer, listar, buscar, crear, enlazar y editar contenido, y entrega notas organizadas con wikilinks.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Datos, ML y conocimiento" data-search="rex-atlas-carrera-knowledgebase datos, ml y conocimiento mantiene la base de conocimiento oficial de atlas sobre contactos internos autorizados de reynasa. organiza departamentos, personas o correos, interacciones, entregables y skills reutilizables; trabaja solo con información permitida y entrega registros trazables.">
+  <p class="skill-theme">Datos, ML y conocimiento</p>
+  <h2><strong>rex-atlas-carrera-knowledgebase</strong></h2>
+  <p>Mantiene la base de conocimiento oficial de ATLAS sobre contactos internos autorizados de Reynasa. Organiza departamentos, personas o correos, interacciones, entregables y skills reutilizables; trabaja solo con información permitida y entrega registros trazables.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Utilidades, hogar y gaming" data-search="game-automation-and-servers utilidades, hogar y gaming configura, ejecuta y automatiza entornos de juego, incluidos servidores minecraft modificados y emuladores; trabaja con runtimes, modpacks, memoria, registros, lecturas ram y estados guardados, y entrega una experiencia jugable verificada.">
+  <p class="skill-theme">Utilidades, hogar y gaming</p>
+  <h2><strong>game-automation-and-servers</strong></h2>
+  <p>Configura, ejecuta y automatiza entornos de juego, incluidos servidores Minecraft modificados y emuladores; trabaja con runtimes, modpacks, memoria, registros, lecturas RAM y estados guardados, y entrega una experiencia jugable verificada.</p>
+</article>
+<article class="skill-card" data-skill-card data-theme="Utilidades, hogar y gaming" data-search="openhue utilidades, hogar y gaming controla iluminación philips hue mediante openhue cli y un puente local, usando nombres de luces, habitaciones, zonas, escenas, brillo, color y temperatura; entrega estados de iluminación aplicados a dispositivos compatibles.">
+  <p class="skill-theme">Utilidades, hogar y gaming</p>
+  <h2><strong>openhue</strong></h2>
+  <p>Controla iluminación Philips Hue mediante OpenHue CLI y un puente local, usando nombres de luces, habitaciones, zonas, escenas, brillo, color y temperatura; entrega estados de iluminación aplicados a dispositivos compatibles.</p>
+</article></section>
+    <div id="sin-resultados" class="empty" role="status"><strong>No hay coincidencias.</strong><br>Prueba con otro término o restablece los filtros.</div>
+  </main>
+  <footer><div class="wrap"><strong>ATLAS · Reynasa</strong> — Catálogo informativo de capacidades operativas.</div></footer>
+  <script>
+  'use strict';
+  (() => {
+    const search = document.getElementById('buscar');
+    const theme = document.getElementById('tema');
+    const reset = document.getElementById('restablecer');
+    const result = document.getElementById('resultado');
+    const empty = document.getElementById('sin-resultados');
+    const cards = Array.from(document.querySelectorAll('[data-skill-card]'));
+    const themeButtons = Array.from(document.querySelectorAll('[data-theme-button]'));
+    const fold = value => value.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const validThemes = new Set(Array.from(theme.options).map(option => option.value));
+
+    function syncUrl() {
+      const params = new URLSearchParams();
+      if (search.value.trim()) params.set('q', search.value.trim());
+      if (theme.value) params.set('tema', theme.value);
+      const suffix = params.toString();
+      history.replaceState(null, '', location.pathname + (suffix ? '?' + suffix : '') + location.hash);
+    }
+
+    function applyFilters(updateUrl = true) {
+      const needle = fold(search.value.trim());
+      const selected = theme.value;
+      let visible = 0;
+      cards.forEach(card => {
+        const matchesTheme = !selected || card.dataset.theme === selected;
+        const matchesText = !needle || fold(card.dataset.search).includes(needle);
+        const show = matchesTheme && matchesText;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      result.textContent = visible + (visible === 1 ? ' resultado' : ' resultados');
+      empty.classList.toggle('visible', visible === 0);
+      if (updateUrl) syncUrl();
+    }
+
+    const initial = new URLSearchParams(location.search);
+    search.value = initial.get('q') || '';
+    const initialTheme = initial.get('tema') || '';
+    theme.value = validThemes.has(initialTheme) ? initialTheme : '';
+    applyFilters(false);
+
+    search.addEventListener('input', () => applyFilters());
+    theme.addEventListener('change', () => applyFilters());
+    reset.addEventListener('click', () => { search.value = ''; theme.value = ''; applyFilters(); search.focus(); });
+    themeButtons.forEach(button => button.addEventListener('click', () => { theme.value = button.dataset.themeButton; applyFilters(); document.getElementById('catalogo').scrollIntoView({block:'start'}); }));
+    document.addEventListener('keydown', event => {
+      if (event.key === '/' && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) { event.preventDefault(); search.focus(); }
+      if (event.key === 'Escape' && document.activeElement === search && search.value) { search.value = ''; applyFilters(); }
+    });
+  })();
+  </script>
+</body>
+</html>
